@@ -4,16 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aujourdhui.Data.Models.Languages
 {
-    // Should be used for small key-values
-    public class LanguageKey : KeyModel
+    // Should be used for large texts
+    public class Translation : IndividualModel
     {
+        public int? ContentID { get; set; }
+        [ForeignKey(nameof(ContentID))]
+        public Content Content { get; set; }
+
         public Language LanguageID { get; set; }
         [ForeignKey(nameof(LanguageID))]
         public LanguageValue Language { get; set; }
-
-        public int KeyID { get; set; }
-        [ForeignKey(nameof(KeyID))]
-        public Key Key { get; set; }
 
         [Required]
         public string Value { get; set; }
