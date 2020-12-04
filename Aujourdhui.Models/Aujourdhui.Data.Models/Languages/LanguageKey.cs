@@ -7,9 +7,9 @@ namespace Aujourdhui.Data.Models.Languages
     // Should be used for small key-values
     public class LanguageKey : KeyModel
     {
-        public Language LanguageID { get; set; }
-        [ForeignKey(nameof(LanguageID))]
-        public LanguageValue Language { get; set; }
+        public Language Language { get; set; }
+        [ForeignKey(nameof(Language))]
+        public LanguageValue LanguageValue { get; set; }
 
         public int KeyID { get; set; }
         [ForeignKey(nameof(KeyID))]

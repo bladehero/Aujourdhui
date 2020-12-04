@@ -11,9 +11,9 @@ namespace Aujourdhui.Data.Models.Languages
         [ForeignKey(nameof(ContentID))]
         public Content Content { get; set; }
 
-        public Language LanguageID { get; set; }
-        [ForeignKey(nameof(LanguageID))]
-        public LanguageValue Language { get; set; }
+        public Language Language { get; set; }
+        [ForeignKey(nameof(Language))]
+        public LanguageValue LanguageValue { get; set; }
 
         [Required]
         public string Value { get; set; }

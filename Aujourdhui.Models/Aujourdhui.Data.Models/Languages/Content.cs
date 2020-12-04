@@ -13,9 +13,9 @@ namespace Aujourdhui.Data.Models.Languages
         [Required]
         public string Property { get; set; }
 
-        public Language LanguageID { get; set; }
-        [ForeignKey(nameof(LanguageID))]
-        public LanguageValue Language { get; set; }
+        public Language Language { get; set; }
+        [ForeignKey(nameof(Language))]
+        public LanguageValue LanguageValue { get; set; }
 
         public ICollection<Translation> Translations { get; set; }
 

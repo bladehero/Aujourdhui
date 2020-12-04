@@ -1,4 +1,5 @@
 ﻿using Aujourdhui.Data.Models;
+using Aujourdhui.Data.Models.Languages;
 using Aujourdhui.Data.Models.Products;
 using Aujourdhui.Data.Models.Recipies;
 using Aujourdhui.Extensions;
@@ -100,6 +101,32 @@ namespace Aujourdhui.Data
                     {
                         RecipeItemType = e,
                         Name = e.ToString()
+                    })
+                );
+            #endregion
+            #region Languages
+            builder.Entity<Content>()
+                   .Property(e => e.Language)
+                   .HasConversion<int>();
+
+            builder.Entity<LanguageKey>()
+                   .Property(e => e.Language)
+                   .HasConversion<int>();
+
+            builder.Entity<Translation>()
+                   .Property(e => e.Language)
+                   .HasConversion<int>();
+
+            builder.Entity<LanguageValue>()
+                   .Property(e => e.Language)
+                   .HasConversion<int>();
+
+            builder.Entity<LanguageValue>().HasData(
+                    Enum.GetValues<Language>().Select(e => new LanguageValue()
+                    {
+                        Language = e,
+                        Name = e.ToString(),
+                        Code = e.GetDescription()
                     })
                 );
             #endregion

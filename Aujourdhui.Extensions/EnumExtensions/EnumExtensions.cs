@@ -5,7 +5,7 @@ namespace Aujourdhui.Extensions.EnumExtensions
 {
     public static class EnumHelper
     {
-        public static string GetDescription<T>(this T enumValue)
+        public static string GetDescription<T>(this T enumValue, string @default = null)
             where T : struct, IConvertible
         {
             if (!typeof(T).IsEnum)
@@ -23,7 +23,7 @@ namespace Aujourdhui.Extensions.EnumExtensions
                 }
             }
 
-            return description;
+            return description ?? @default;
         }
     }
 }
