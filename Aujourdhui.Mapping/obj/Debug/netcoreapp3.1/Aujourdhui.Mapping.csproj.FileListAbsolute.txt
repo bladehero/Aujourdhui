@@ -1,8 +1,0 @@
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\bin\Debug\netcoreapp3.1\Aujourdhui.Mapping.deps.json
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\bin\Debug\netcoreapp3.1\Aujourdhui.Mapping.dll
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\bin\Debug\netcoreapp3.1\Aujourdhui.Mapping.pdb
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\obj\Debug\netcoreapp3.1\Aujourdhui.Mapping.AssemblyInfoInputs.cache
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\obj\Debug\netcoreapp3.1\Aujourdhui.Mapping.AssemblyInfo.cs
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\obj\Debug\netcoreapp3.1\Aujourdhui.Mapping.csproj.CoreCompileInputs.cache
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\obj\Debug\netcoreapp3.1\Aujourdhui.Mapping.dll
-C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Mapping\obj\Debug\netcoreapp3.1\Aujourdhui.Mapping.pdb
