@@ -8,6 +8,8 @@ namespace Aujourdhui.Data.Models.Products
     {
         public string Name { get; set; }
 
+        public int Position { get; set; }
+
         public int? ParentID { get; set; }
         [ForeignKey(nameof(ParentID))]
         public Category Parent { get; set; }

@@ -1,9 +1,11 @@
 ﻿using Aujourdhui.Data.Models;
 using Aujourdhui.Data.Models.Products;
 using Aujourdhui.Data.Models.Recipies;
+using Aujourdhui.Extensions;
 using Aujourdhui.Extensions.EnumExtensions;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -41,15 +43,13 @@ namespace Aujourdhui.Data
         public DbSet<RecipeItemTypeValue> RecipeItemTypes { get; set; }
         #endregion
 
-        public ApplicationDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions options,
+                                    IOptions<OperationalStoreOptions> operationalStoreOptions)
+            : base(options, operationalStoreOptions) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            #region Enums intialization
+            #region Enums
             #region PortionType
             builder.Entity<PurchasedIngredient>()
                    .Property(e => e.PortionType)
@@ -102,6 +102,47 @@ namespace Aujourdhui.Data
                         Name = e.ToString()
                     })
                 );
+            #endregion
+            #endregion
+
+            #region Identities
+            #region Roles
+            builder.Entity<IdentityRole>().HasData(
+                    Enum.GetValues<Constants.Role>().Select(e => new IdentityRole()
+                    {
+                        Id = ((int)e).ToString(),
+                        Name = e.ToString(),
+                        NormalizedName = e.ToString().ToUpper()
+                    })
+                );
+            #endregion
+
+            #region Users
+            var hasher = new PasswordHasher<ApplicationUser>();
+            var user = new ApplicationUser
+            {
+                Email = "nikita.dermenzhi@gmail.com",
+                EmailConfirmed = true,
+                NormalizedEmail = "NIKITA.DERMENZHI@GMAIL.COM",
+                FirstName = "Nikita",
+                LastName = "Dermenzhi",
+                MiddleName = "A.",
+                UserName = "master",
+                NormalizedUserName = "MASTER",
+                PhoneNumber = "+380687379427",
+                PhoneNumberConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "QwErty123")
+            };
+            builder.Entity<ApplicationUser>().HasData(user);
+            #endregion
+
+            #region UserRoles
+            builder.Entity<IdentityUserRole<string>>()
+                   .HasData(new IdentityUserRole<string>
+                   {
+                       RoleId = ((int)Constants.Role.Master).ToString(),
+                       UserId = user.Id
+                   });
             #endregion
             #endregion
 
