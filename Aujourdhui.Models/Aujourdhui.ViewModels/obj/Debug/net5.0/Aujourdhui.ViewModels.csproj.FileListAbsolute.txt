@@ -1,0 +1,11 @@
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\bin\Debug\net5.0\Aujourdhui.ViewModels.deps.json
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\bin\Debug\net5.0\Aujourdhui.ViewModels.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\bin\Debug\net5.0\ref\Aujourdhui.ViewModels.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\bin\Debug\net5.0\Aujourdhui.ViewModels.pdb
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.AssemblyInfoInputs.cache
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.AssemblyInfo.cs
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.csproj.CoreCompileInputs.cache
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\ref\Aujourdhui.ViewModels.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Models\Aujourdhui.ViewModels\obj\Debug\net5.0\Aujourdhui.ViewModels.pdb

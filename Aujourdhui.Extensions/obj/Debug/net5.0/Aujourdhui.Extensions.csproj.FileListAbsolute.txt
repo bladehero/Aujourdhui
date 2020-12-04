@@ -1,0 +1,11 @@
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\bin\Debug\net5.0\Aujourdhui.Extensions.deps.json
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\bin\Debug\net5.0\Aujourdhui.Extensions.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\bin\Debug\net5.0\ref\Aujourdhui.Extensions.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\bin\Debug\net5.0\Aujourdhui.Extensions.pdb
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.AssemblyInfoInputs.cache
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.AssemblyInfo.cs
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.csproj.CoreCompileInputs.cache
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\ref\Aujourdhui.Extensions.dll
+C:\Users\nikit\source\repos\aujourdhui\Aujourdhui.Extensions\obj\Debug\net5.0\Aujourdhui.Extensions.pdb
