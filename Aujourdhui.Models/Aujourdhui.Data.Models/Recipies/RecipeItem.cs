@@ -1,11 +1,13 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aujourdhui.Data.Models.Recipies
 {
     public class RecipeItem : IndividualModel
     {
+        [Required]
         public string Value { get; set; }
         public int? DurationInMinutes { get; set; }
 

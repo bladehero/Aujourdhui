@@ -1,7 +1,4 @@
-﻿using Aujourdhui.Data.Models;
-using Microsoft.AspNetCore.Identity;
-
-namespace Aujourdhui.Extensions
+﻿namespace Aujourdhui.Extensions
 {
     public static class Constants
     {

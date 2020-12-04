@@ -7,6 +7,7 @@ namespace Aujourdhui.Data.Models.Recipies
         [Key]
         public RecipeItemType RecipeItemType { get; set; }
 
+        [Required]
         public string Name { get; set; }
     }
 

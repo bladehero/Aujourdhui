@@ -8,7 +8,9 @@ namespace Aujourdhui.Data.Models.Recipies
         [Key]
         public RecipeDifficultyLevel RecipeDifficultyLevel { get; set; }
 
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Description { get; set; }
     }
 

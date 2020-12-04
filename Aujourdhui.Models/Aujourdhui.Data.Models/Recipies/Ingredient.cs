@@ -22,7 +22,7 @@ namespace Aujourdhui.Data.Models.Recipies
         [Range(0.0, double.MaxValue)]
         public double Calories { get; set; }
 
-        public decimal? EstimationCost { get; set; }
+        public decimal? EstimatedCost { get; set; }
 
         public int FirmID { get; set; }
         [ForeignKey(nameof(FirmID))]

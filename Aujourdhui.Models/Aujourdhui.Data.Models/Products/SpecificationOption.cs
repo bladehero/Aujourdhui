@@ -1,4 +1,5 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aujourdhui.Data.Models.Products
@@ -12,7 +13,8 @@ namespace Aujourdhui.Data.Models.Products
         public int? OptionID { get; set; }
         [ForeignKey(nameof(OptionID))]
         public Option Option { get; set; }
-
+        
+        [Required]
         public string Value { get; set; }
     }
 }

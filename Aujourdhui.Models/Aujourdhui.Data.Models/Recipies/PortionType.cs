@@ -8,7 +8,9 @@ namespace Aujourdhui.Data.Models.Recipies
         [Key]
         public PortionType PortionType { get; set; }
 
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Units { get; set; }
     }
 
