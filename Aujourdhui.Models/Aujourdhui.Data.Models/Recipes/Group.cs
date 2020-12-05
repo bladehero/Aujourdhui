@@ -1,7 +1,7 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
 using System.ComponentModel.DataAnnotations;
 
-namespace Aujourdhui.Data.Models.Recipies
+namespace Aujourdhui.Data.Models.Recipes
 {
     public class Group : IndividualModel
     {

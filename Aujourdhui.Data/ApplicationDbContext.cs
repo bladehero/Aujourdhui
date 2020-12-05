@@ -1,7 +1,8 @@
 ﻿using Aujourdhui.Data.Models;
 using Aujourdhui.Data.Models.Languages;
 using Aujourdhui.Data.Models.Products;
-using Aujourdhui.Data.Models.Recipies;
+using Aujourdhui.Data.Models.Recipes;
+using Aujourdhui.Data.Models.Storage;
 using Aujourdhui.Extensions;
 using Aujourdhui.Extensions.EnumExtensions;
 using IdentityServer4.EntityFramework.Options;
@@ -22,6 +23,14 @@ namespace Aujourdhui.Data
         public DbSet<Country> Countries { get; set; }
         #endregion
 
+        #region Languages
+        public DbSet<Content> Contents { get; set; }
+        public DbSet<Key> Keys { get; set; }
+        public DbSet<LanguageValue> Languages { get; set; }
+        public DbSet<LanguageKey> LanguageKeys { get; set; }
+        public DbSet<Translation> Translations { get; set; }
+        #endregion
+
         #region Products
         public DbSet<Category> Categories { get; set; }
         public DbSet<Option> Options { get; set; }
@@ -32,16 +41,23 @@ namespace Aujourdhui.Data
         public DbSet<SpecificationOption> SpecificationOptions { get; set; }
         #endregion
 
-        #region Recipies
+        #region Recipes
         public DbSet<Group> Group { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<PortionTypeValue> PortionTypes { get; set; }
-        public DbSet<PurchasedIngredient> PurchasedIngredients { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<RecipeDifficultyLevelValue> RecipeDifficultyLevels { get; set; }
         public DbSet<RecipeItem> RecipeItems { get; set; }
         public DbSet<RecipeItemIngredient> RecipeItemIngredients { get; set; }
         public DbSet<RecipeItemTypeValue> RecipeItemTypes { get; set; }
+        public DbSet<ReleasedRecipe> ReleasedRecipes { get; set; }
+        #endregion
+
+        #region Storage
+        public DbSet<Commodity> Commodities { get; set; }
+        public DbSet<CommodityLink> CommodityLinks { get; set; }
+        public DbSet<PortionTypeValue> PortionTypes { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchaseConsumption> PurchaseConsumptions { get; set; }
         #endregion
 
         public ApplicationDbContext(DbContextOptions options,
@@ -52,7 +68,7 @@ namespace Aujourdhui.Data
         {
             #region Enums
             #region PortionType
-            builder.Entity<PurchasedIngredient>()
+            builder.Entity<Purchase>()
                    .Property(e => e.PortionType)
                    .HasConversion<int>();
 

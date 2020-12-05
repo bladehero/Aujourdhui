@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aujourdhui.Data.Models.Languages
 {
-    // Should be used for small key-values
+    /// <summary>
+    /// Should be used for small key-values
+    /// </summary>
     public class LanguageKey : KeyModel
     {
         public Language Language { get; set; }

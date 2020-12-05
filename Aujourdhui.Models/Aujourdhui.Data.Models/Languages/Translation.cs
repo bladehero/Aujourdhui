@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aujourdhui.Data.Models.Languages
 {
-    // Should be used for large texts
+    /// <summary>
+    /// Should be used for large texts
+    /// </summary>
     public class Translation : IndividualModel
     {
         public int? ContentID { get; set; }

@@ -2,10 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aujourdhui.Data.Models.Recipies
+namespace Aujourdhui.Data.Models.Recipes
 {
     public class RecipeItemIngredient : IndividualModel
     {
+        /// <summary>
+        /// Representation value of ingredient name
+        /// </summary>
         [Required]
         public string Text { get; set; }
 

@@ -1,14 +1,19 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
+using Aujourdhui.Data.Models.Recipes;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aujourdhui.Data.Models.Recipies
+namespace Aujourdhui.Data.Models.Storage
 {
-    public class Ingredient : IndividualModel
+    /// <summary>
+    /// List of possible products for user
+    /// </summary>
+    public class Commodity : IndividualModel
     {
         [Required]
         public string Name { get; set; }
+
         [Range(0, int.MaxValue)]
         public int ExpirationInDays { get; set; }
         [Range(0.0, double.MaxValue)]
@@ -22,17 +27,17 @@ namespace Aujourdhui.Data.Models.Recipies
         [Range(0.0, double.MaxValue)]
         public double Calories { get; set; }
 
-        public decimal? EstimatedCost { get; set; }
-
-        public int FirmID { get; set; }
+        public int? FirmID { get; set; }
         [ForeignKey(nameof(FirmID))]
         public Firm Firm { get; set; }
 
-        public ICollection<PurchasedIngredient> PurchasedIngredients { get; set; }
+        public ICollection<Ingredient> Ingredients { get; set; }
+        public ICollection<CommodityLink> CommodityLinks { get; set; }
 
-        public Ingredient()
+        public Commodity()
         {
-            PurchasedIngredients = new List<PurchasedIngredient>();
+            Ingredients = new List<Ingredient>();
+            CommodityLinks = new List<CommodityLink>();
         }
     }
 }

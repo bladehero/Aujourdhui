@@ -1,11 +1,15 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aujourdhui.Data.Models.Recipies
+namespace Aujourdhui.Data.Models.Storage
 {
-    public class PurchasedIngredient : IndividualModel
+    /// <summary>
+    /// Commodity what was bought
+    /// </summary>
+    public class Purchase : IndividualModel
     {
         public DateTime? DateProduced { get; set; }
         public DateTime? DateExpiration { get; set; }
@@ -20,8 +24,15 @@ namespace Aujourdhui.Data.Models.Recipies
         [ForeignKey(nameof(PortionType))]
         public PortionTypeValue PortionTypeValue { get; set; }
 
-        public int IngredientID { get; set; }
-        [ForeignKey(nameof(IngredientID))]
-        public Ingredient Ingredient { get; set; }
+        public int CommodityID { get; set; }
+        [ForeignKey(nameof(CommodityID))]
+        public Commodity Commodity { get; set; }
+
+        public ICollection<PurchaseConsumption> PurchaseConsumptions { get; set; }
+
+        public Purchase()
+        {
+            PurchaseConsumptions = new List<PurchaseConsumption>();
+        }
     }
 }

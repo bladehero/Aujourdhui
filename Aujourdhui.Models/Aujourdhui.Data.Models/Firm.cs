@@ -1,5 +1,6 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
-using Aujourdhui.Data.Models.Recipies;
+using Aujourdhui.Data.Models.Products;
+using Aujourdhui.Data.Models.Storage;
 using System.Collections.Generic;
 
 namespace Aujourdhui.Data.Models
@@ -8,11 +9,13 @@ namespace Aujourdhui.Data.Models
     {
         public string Key { get; set; }
 
-        public ICollection<Ingredient> Ingredients { get; set; }
+        public ICollection<Commodity> Commodities { get; set; }
+        public ICollection<Product> Products { get; set; }
 
         public Firm()
         {
-            Ingredients = new List<Ingredient>();
+            Commodities = new List<Commodity>();
+            Products = new List<Product>();
         }
     }
 }

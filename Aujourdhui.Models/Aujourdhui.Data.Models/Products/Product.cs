@@ -1,4 +1,5 @@
 ﻿using Aujourdhui.Data.Models.Essentials;
+using Aujourdhui.Data.Models.Recipes;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,6 +10,10 @@ namespace Aujourdhui.Data.Models.Products
     {
         [Required]
         public string Name { get; set; }
+
+        public int? ReleasedRecipeID { get; set; }
+        [ForeignKey(nameof(ReleasedRecipeID))]
+        public ReleasedRecipe ReleasedRecipe { get; set; }
 
         public int? FirmID { get; set; }
         [ForeignKey(nameof(FirmID))]
