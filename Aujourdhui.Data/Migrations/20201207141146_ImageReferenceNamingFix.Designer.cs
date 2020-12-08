@@ -3,15 +3,17 @@ using System;
 using Aujourdhui.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Aujourdhui.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201207141146_ImageReferenceNamingFix")]
+    partial class ImageReferenceNamingFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,9 +96,9 @@ namespace Aujourdhui.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b82ac23b-454f-48e3-9fe4-acc0fc5d4e59",
+                            Id = "aff10895-3c12-411a-81b0-9c768ba52521",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1898a252-e142-4589-8b09-a836e3d8d079",
+                            ConcurrencyStamp = "db9f99a3-4097-4ff2-9d6e-389d194eb015",
                             Email = "nikita.dermenzhi@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Nikita",
@@ -105,10 +107,10 @@ namespace Aujourdhui.Data.Migrations
                             MiddleName = "A.",
                             NormalizedEmail = "NIKITA.DERMENZHI@GMAIL.COM",
                             NormalizedUserName = "MASTER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHgKBqdzmq5WqiWmhpkTbkfZ/NML4muWtRQ1x4sw2knfXIfwPXPhJcH2Z9Pe/VYdaQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFCkwxQ943jP7lRBFJVptZ1vkSfZ3TGZaZGFcRyoqgbjqXyPj/kjSNi0GqrVFOBUuw==",
                             PhoneNumber = "+380687379427",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "d3a6dd69-c35e-443b-af6c-e0b93d8ad787",
+                            SecurityStamp = "f01fe236-3f31-455f-8067-8c1981ad4394",
                             TwoFactorEnabled = false,
                             UserName = "master"
                         });
@@ -136,33 +138,6 @@ namespace Aujourdhui.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Aujourdhui.Data.Models.FileReference", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Entity")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ObjectId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("FileReferences");
                 });
 
             modelBuilder.Entity("Aujourdhui.Data.Models.Firm", b =>
@@ -202,6 +177,33 @@ namespace Aujourdhui.Data.Migrations
                     b.HasIndex("ModifiedByUserID");
 
                     b.ToTable("Firms");
+                });
+
+            modelBuilder.Entity("Aujourdhui.Data.Models.ImageReference", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Entity")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ObjectId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ImageReferences");
                 });
 
             modelBuilder.Entity("Aujourdhui.Data.Models.Languages.Content", b =>
@@ -1529,28 +1531,28 @@ namespace Aujourdhui.Data.Migrations
                         new
                         {
                             Id = "0",
-                            ConcurrencyStamp = "e63aaf02-f29c-4f94-8452-6c69be6b0b74",
+                            ConcurrencyStamp = "91201529-634c-4c82-becc-a0660634096c",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "dfdfebf0-d406-48ac-a1b4-8012333707a8",
+                            ConcurrencyStamp = "28743ea0-1833-466b-82eb-7ceb6342d6b2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "961deb23-b389-4b24-b679-c1cb5c849453",
+                            ConcurrencyStamp = "43eef281-8ab8-42b4-a467-d02086848985",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "9fc9ab52-a0c3-4651-a565-2f64c850cc0f",
+                            ConcurrencyStamp = "99fd8960-f7c6-4089-80da-dc43779538c3",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -1645,7 +1647,7 @@ namespace Aujourdhui.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "b82ac23b-454f-48e3-9fe4-acc0fc5d4e59",
+                            UserId = "aff10895-3c12-411a-81b0-9c768ba52521",
                             RoleId = "0"
                         });
                 });

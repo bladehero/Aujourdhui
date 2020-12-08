@@ -9,8 +9,10 @@ using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Aujourdhui.Data
@@ -19,7 +21,7 @@ namespace Aujourdhui.Data
     {
         #region Basic
         public DbSet<Firm> Firms { get; set; }
-        public DbSet<ImageReference> ImageReferences { get; set; }
+        public DbSet<FileReference> FileReferences { get; set; }
         public DbSet<Country> Countries { get; set; }
         #endregion
 
@@ -59,6 +61,8 @@ namespace Aujourdhui.Data
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseConsumption> PurchaseConsumptions { get; set; }
         #endregion
+
+        public IEnumerable<IEntityType> EntityTypes => Model.GetEntityTypes();
 
         public ApplicationDbContext(DbContextOptions options,
                                     IOptions<OperationalStoreOptions> operationalStoreOptions)
@@ -187,6 +191,33 @@ namespace Aujourdhui.Data
                        UserId = user.Id
                    });
             #endregion
+            #endregion
+
+            #region Unique Guids
+            builder.Entity<Country>().HasAlternateKey(x => x.Guid);
+            builder.Entity<FileReference>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Firm>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Content>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Key>().HasAlternateKey(x => x.Guid);
+            builder.Entity<LanguageKey>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Translation>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Category>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Option>().HasAlternateKey(x => x.Guid);
+            builder.Entity<PricePolicy>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Product>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Property>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Specification>().HasAlternateKey(x => x.Guid);
+            builder.Entity<SpecificationOption>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Group>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Ingredient>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Recipe>().HasAlternateKey(x => x.Guid);
+            builder.Entity<RecipeItem>().HasAlternateKey(x => x.Guid);
+            builder.Entity<RecipeItemIngredient>().HasAlternateKey(x => x.Guid);
+            builder.Entity<ReleasedRecipe>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Commodity>().HasAlternateKey(x => x.Guid);
+            builder.Entity<CommodityLink>().HasAlternateKey(x => x.Guid);
+            builder.Entity<Purchase>().HasAlternateKey(x => x.Guid);
+            builder.Entity<PurchaseConsumption>().HasAlternateKey(x => x.Guid);
             #endregion
 
             base.OnModelCreating(builder);

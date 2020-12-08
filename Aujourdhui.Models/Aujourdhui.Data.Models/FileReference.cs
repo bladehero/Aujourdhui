@@ -3,9 +3,9 @@ using System;
 
 namespace Aujourdhui.Data.Models
 {
-    public class ImageReference : KeyModel
+    public class FileReference : KeyModel
     {
-        public string Table { get; set; }
+        public string Entity { get; set; }
         public DateTime Date { get; set; }
         public string Name { get; set; }
         public int ObjectId { get; set; }
