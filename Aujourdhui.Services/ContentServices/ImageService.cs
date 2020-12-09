@@ -22,11 +22,11 @@ namespace Aujourdhui.Services.ContentServices
     public class ImageService : FileService, IImageService
     {
         public const string ImagesFolder = "Images";
-        public static readonly IEnumerable<ImageFormat> RequiredFormats = new[]
+        public static readonly IDictionary<ImageFormat, IEnumerable<string>> RequiredFormats = new Dictionary<ImageFormat, IEnumerable<string>>
         {
-            ImageFormat.Jpeg,
-            ImageFormat.Png,
-            ImageFormat.Gif
+            { ImageFormat.Jpeg, new [] { ".jpeg", ".jpg" } },
+            { ImageFormat.Png, new [] { ".png" } },
+            { ImageFormat.Gif, new [] { ".gif" } },
         };
 
         protected IImageFormatterService ImageFormatterService { get; }
@@ -125,6 +125,15 @@ namespace Aujourdhui.Services.ContentServices
         #region Helpers
         protected override async Task UploadFilesAsync(IEnumerable<FileStreamSM> models)
         {
+            foreach (var model in models)
+            {
+                var extension = Path.GetExtension(model.FileName);
+                if (!RequiredFormats.Values.SelectMany(formats => formats).Any(x => x.Equals(extension)))
+                {
+                    throw new NotSupportedImageFormatException(extension);
+                }
+            }
+
 #if DEBUG
             Console.WriteLine();
             Console.WriteLine(new string('-', 50));
@@ -143,10 +152,9 @@ namespace Aujourdhui.Services.ContentServices
             {
                 var image = Image.FromStream(model.Stream);
 
-                if (!IsCorrectImageFormat(image, RequiredFormats))
+                if (!IsCorrectImageFormat(image, RequiredFormats.Select(x => x.Key)))
                 {
-                    var extension = Path.GetExtension(model.FileName);
-                    throw new NotSupportedImageFormatException(extension);
+                    throw new NotSupportedImageFormatException(image.RawFormat.ToString());
                 }
 
                 var fileStreams = proportionSizes.Where(x => ImageFormatterService.CanBeProcessed(image,
