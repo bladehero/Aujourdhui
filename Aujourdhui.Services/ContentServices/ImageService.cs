@@ -167,8 +167,6 @@ namespace Aujourdhui.Services.ContentServices
                            where ImageFormatterService.CanBeProcessed(model.Stream, size, proportion)
                            select new { Model = model, Size= size,Proportion = proportion});
 
-            var list = new List<FileStreamSM>(results.Count());
-            foreach (var result in results)
 #if DEBUG
 
             Stopwatch.Stop();
@@ -184,6 +182,9 @@ namespace Aujourdhui.Services.ContentServices
             Console.WriteLine("{0} - Starting processing images...", GetFullMemberName());
             Stopwatch.Restart();
 #endif
+
+            var list = new List<FileStreamSM>(results.Count());
+            foreach (var result in results)
             {
                 var stream = ImageFormatterService.ProcessImage(result.Model.Stream, result.Size, result.Proportion);
                 if (stream is null)
@@ -198,6 +199,8 @@ namespace Aujourdhui.Services.ContentServices
                 };
                 list.Add(model);
             }
+
+
 #if DEBUG
             Stopwatch.Stop();
             Console.WriteLine("{0} - Processing images took:", GetFullMemberName());
