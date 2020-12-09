@@ -13,6 +13,7 @@ using Aujourdhui.Infrastructure.Services;
 using Aujourdhui.Services.Models.FileServiceModels;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Imaging;
+using System.Drawing;
 
 #nullable enable
 
@@ -121,7 +122,7 @@ namespace Aujourdhui.Services.ContentServices
         }
         public override Task<bool> OverwriteAsync(FileStreamSM model, Guid guid)
         {
-            if (!IImageFormatterService.IsCorrectImageFormat(model.Stream, RequiredFormats))
+            if (!IsCorrectImageFormat(model.Stream, RequiredFormats))
             {
                 var extension = Path.GetExtension(model.FileName);
                 throw new NotSupportedImageFormatException(extension);
@@ -131,7 +132,7 @@ namespace Aujourdhui.Services.ContentServices
         }
         public override Task<bool> UploadAsync(FileStreamSM model, string entity, int objectId, DateTime? date = null)
         {
-            if (!IImageFormatterService.IsCorrectImageFormat(model.Stream, RequiredFormats))
+            if (!IsCorrectImageFormat(model.Stream, RequiredFormats))
             {
                 var extension = Path.GetExtension(model.FileName);
                 throw new NotSupportedImageFormatException(extension);
@@ -141,7 +142,7 @@ namespace Aujourdhui.Services.ContentServices
         }
         public override Task<bool> UploadAsync(IEnumerable<FileStreamSM> models, string entity, int objectId, DateTime? date = null)
         {
-            if (models.FirstOrDefault(x => !IImageFormatterService.IsCorrectImageFormat(x.Stream, RequiredFormats)) is FileStreamSM model)
+            if (models.FirstOrDefault(x => !IsCorrectImageFormat(x.Stream, RequiredFormats)) is FileStreamSM model)
             {
                 var extension = Path.GetExtension(model.FileName);
                 throw new NotSupportedImageFormatException(extension);
@@ -177,6 +178,20 @@ namespace Aujourdhui.Services.ContentServices
             }
 
             return base.UploadFilesAsync(list);
+        }
+        public static bool IsCorrectImageFormat(Stream stream, IEnumerable<ImageFormat> imageFormats)
+        {
+            using (var image = Image.FromStream(stream))
+            {
+                foreach (var format in imageFormats)
+                {
+                    if (image.RawFormat.Equals(format))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
         #endregion
     }

@@ -16,21 +16,5 @@ namespace Aujourdhui.Infrastructure.Services
         bool CanBeProcessed(Stream source, ImageSize size, ImageProportion proportion);
         Stream ProcessImage(Stream source, ImageSize size, ImageProportion proportion);
         string SpecifyImagePath(string path, ImageSize size, ImageProportion proportion);
-
-
-        public static bool IsCorrectImageFormat(Stream stream, IEnumerable<ImageFormat> imageFormats)
-        {
-            using (var image = Image.FromStream(stream))
-            {
-                foreach (var format in imageFormats)
-                {
-                    if (image.RawFormat.Equals(format))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
     }
 }
