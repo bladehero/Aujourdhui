@@ -154,6 +154,13 @@ namespace Aujourdhui.Services.ContentServices
         #region Helpers
         protected override Task UploadFilesAsync(IEnumerable<FileStreamSM> models)
         {
+#if DEBUG
+            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
+            Console.WriteLine("{0} - Generating a list of valid images...", GetFullMemberName());
+            Stopwatch.Restart();
+#endif
+
             var results = (from model in models
                            from size in ImageFormatterService.Sizes.DefaultIfEmpty()
                            from proportion in ImageFormatterService.Proportions.DefaultIfEmpty()
@@ -162,6 +169,21 @@ namespace Aujourdhui.Services.ContentServices
 
             var list = new List<FileStreamSM>(results.Count());
             foreach (var result in results)
+#if DEBUG
+
+            Stopwatch.Stop();
+            Console.WriteLine("{0} - Generating a list of valid images took:", GetFullMemberName());
+            Console.WriteLine(Stopwatch.Elapsed);
+#endif
+
+            ;
+
+#if DEBUG
+            Console.WriteLine();
+            Console.WriteLine(new string('-', 50));
+            Console.WriteLine("{0} - Starting processing images...", GetFullMemberName());
+            Stopwatch.Restart();
+#endif
             {
                 var stream = ImageFormatterService.ProcessImage(result.Model.Stream, result.Size, result.Proportion);
                 if (stream is null)
@@ -176,6 +198,11 @@ namespace Aujourdhui.Services.ContentServices
                 };
                 list.Add(model);
             }
+#if DEBUG
+            Stopwatch.Stop();
+            Console.WriteLine("{0} - Processing images took:", GetFullMemberName());
+            Console.WriteLine(Stopwatch.Elapsed);
+#endif
 
             return base.UploadFilesAsync(list);
         }
