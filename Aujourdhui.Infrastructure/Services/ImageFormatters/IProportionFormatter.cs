@@ -2,7 +2,6 @@
 using Aujourdhui.Services.Models.ImageServiceModels;
 using System;
 using System.Drawing;
-using System.IO;
 
 namespace Aujourdhui.Infrastructure.Services.ImageFormatters
 {
@@ -14,6 +13,6 @@ namespace Aujourdhui.Infrastructure.Services.ImageFormatters
             var rate = size.GetImageSizeRate();
             return Math.Max(image.Width, image.Height) > rate.GetValueOrDefault();
         }
-        Stream PrepareImage(Func<Image, Size, Bitmap> resizing, Image image, ImageSize size);
+        Image PrepareImage(Func<Image, Size, Bitmap> resizing, Image image, ImageSize size);
     }
 }

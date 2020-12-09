@@ -406,6 +406,7 @@ namespace Aujourdhui.Services.ContentServices
                 model.Stream.Seek(0, SeekOrigin.Begin);
                 using var fs = new FileStream(model.FileName, FileMode.OpenOrCreate);
                 await model.Stream.CopyToAsync(fs);
+                await model.Stream.DisposeAsync();
             }
         }
         protected static object PrepareIdToObject(IEntityType entityType, int objectId)

@@ -4,8 +4,6 @@ using Aujourdhui.Services.Exceptions;
 using Aujourdhui.Services.Models.ImageServiceModels;
 using System;
 using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Aujourdhui.Services.ContentServices.ImageFormatters
 {
@@ -13,7 +11,7 @@ namespace Aujourdhui.Services.ContentServices.ImageFormatters
     {
         public ImageProportion Proportion => ImageProportion.Origin;
 
-        public Stream PrepareImage(Func<Image, Size, Bitmap> resizing, Image image, ImageSize size)
+        public Image PrepareImage(Func<Image, Size, Bitmap> resizing, Image image, ImageSize size)
         {
             if (resizing is null)
             {
@@ -38,17 +36,7 @@ namespace Aujourdhui.Services.ContentServices.ImageFormatters
                     ? new Size(rate.Value, (int)((decimal)image.Height / image.Width * rate.Value))
                     : new Size((int)((decimal)image.Width / image.Height * rate.Value), rate.Value);
 
-            var bitmap = resizing(image, imageSize);
-            var memoryStream = new MemoryStream();
-            try
-            {
-                bitmap.Save(memoryStream, image.RawFormat);
-            }
-            catch (ExternalException ex)
-            {
-                throw new NotSupportedImageSizeException(image, size, ex);
-            }
-            return memoryStream;
+            return resizing(image, imageSize);
         }
     }
 }

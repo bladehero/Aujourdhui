@@ -41,7 +41,7 @@ namespace Aujourdhui.Server.Controllers
         {
             var models = formFileCollection.Select(x => new FileStreamSM(x.OpenReadStream(), x.FileName)).ToList();
             bool result;
-            if (models.Count() == 1)
+            if (models.Count == 1)
             {
                 result = await ImageService.UploadAsync(models.First(), "Aujourdhui.Data.Models.Languages.LanguageValue", 1);
             }

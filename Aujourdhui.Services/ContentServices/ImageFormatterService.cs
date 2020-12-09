@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 
 namespace Aujourdhui.Services.ContentServices
@@ -30,7 +29,7 @@ namespace Aujourdhui.Services.ContentServices
             ProportionServiceResolver = proportionServiceResolver;
         }
 
-        public bool CanBeProcessed(Stream source, ImageSize size, ImageProportion proportion)
+        public bool CanBeProcessed(Image image, ImageSize size, ImageProportion proportion)
         {
             var formatter = ProportionServiceResolver(proportion);
             if (formatter is null)
@@ -38,11 +37,10 @@ namespace Aujourdhui.Services.ContentServices
                 throw new NotSupportedException($"Formatter of `{nameof(proportion)}` is not supported yet!");
             }
 
-            var image = Image.FromStream(source);
             return formatter.CanBeFormatted(image, size);
         }
 
-        public Stream ProcessImage(Stream source, ImageSize size, ImageProportion proportion)
+        public Image ProcessImage(Image image, ImageSize size, ImageProportion proportion)
         {
             if (!Sizes.Contains(size))
             {
@@ -62,14 +60,12 @@ namespace Aujourdhui.Services.ContentServices
 
             if (size == ImageSize.Origin && proportion == ImageProportion.Origin)
             {
-                return source;
+                return image;
             }
 
-            var image = Image.FromStream(source);
             try
             {
-                var stream = formatter.PrepareImage(ResizeImage, image, size);
-                return stream;
+                return formatter.PrepareImage(ResizeImage, image, size);
             }
             catch (NotSupportedImageSizeException ex)
             {

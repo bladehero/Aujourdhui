@@ -120,105 +120,74 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public override Task<bool> OverwriteAsync(FileStreamSM model, Guid guid)
-        {
-            if (!IsCorrectImageFormat(model.Stream, RequiredFormats))
-            {
-                var extension = Path.GetExtension(model.FileName);
-                throw new NotSupportedImageFormatException(extension);
-            }
 
-            return base.OverwriteAsync(model, guid);
-        }
-        public override Task<bool> UploadAsync(FileStreamSM model, string entity, int objectId, DateTime? date = null)
-        {
-            if (!IsCorrectImageFormat(model.Stream, RequiredFormats))
-            {
-                var extension = Path.GetExtension(model.FileName);
-                throw new NotSupportedImageFormatException(extension);
-            }
-
-            return base.UploadAsync(model, entity, objectId, date);
-        }
-        public override Task<bool> UploadAsync(IEnumerable<FileStreamSM> models, string entity, int objectId, DateTime? date = null)
-        {
-            if (models.FirstOrDefault(x => !IsCorrectImageFormat(x.Stream, RequiredFormats)) is FileStreamSM model)
-            {
-                var extension = Path.GetExtension(model.FileName);
-                throw new NotSupportedImageFormatException(extension);
-            }
-
-            return base.UploadAsync(models, entity, objectId, date);
-        }
 
         #region Helpers
-        protected override Task UploadFilesAsync(IEnumerable<FileStreamSM> models)
+        protected override async Task UploadFilesAsync(IEnumerable<FileStreamSM> models)
         {
 #if DEBUG
             Console.WriteLine();
             Console.WriteLine(new string('-', 50));
-            Console.WriteLine("{0} - Generating a list of valid images...", GetFullMemberName());
+            Console.WriteLine("{0} - Processing images...", GetFullMemberName());
             Stopwatch.Restart();
 #endif
 
-            var results = (from model in models
-                           from size in ImageFormatterService.Sizes.DefaultIfEmpty()
-                           from proportion in ImageFormatterService.Proportions.DefaultIfEmpty()
-                           where ImageFormatterService.CanBeProcessed(model.Stream, size, proportion)
-                           select new { Model = model, Size= size,Proportion = proportion});
+            var proportionSizes = from size in ImageFormatterService.Sizes.DefaultIfEmpty()
+                                  from proportion in ImageFormatterService.Proportions.DefaultIfEmpty()
+                                  select new { Size = size, Proportion = proportion };
 
-#if DEBUG
-
-            Stopwatch.Stop();
-            Console.WriteLine("{0} - Generating a list of valid images took:", GetFullMemberName());
-            Console.WriteLine(Stopwatch.Elapsed);
-#endif
-
-            ;
-
-#if DEBUG
-            Console.WriteLine();
-            Console.WriteLine(new string('-', 50));
-            Console.WriteLine("{0} - Starting processing images...", GetFullMemberName());
-            Stopwatch.Restart();
-#endif
-
-            var list = new List<FileStreamSM>(results.Count());
-            foreach (var result in results)
+            var capacity = models.Count();
+            var tasks = new List<Task>(capacity);
+            var disposings = new List<Task>(capacity);
+            Parallel.ForEach(models, model =>
             {
-                var stream = ImageFormatterService.ProcessImage(result.Model.Stream, result.Size, result.Proportion);
-                if (stream is null)
+                var image = Image.FromStream(model.Stream);
+
+                if (!IsCorrectImageFormat(image, RequiredFormats))
                 {
-                    continue;
+                    var extension = Path.GetExtension(model.FileName);
+                    throw new NotSupportedImageFormatException(extension);
                 }
 
-                var model = new FileStreamSM
-                {
-                    FileName = ImageFormatterService.SpecifyImagePath(result.Model.FileName, result.Size, result.Proportion),
-                    Stream = stream
-                };
-                list.Add(model);
-            }
+                var fileStreams = proportionSizes.Where(x => ImageFormatterService.CanBeProcessed(image,
+                                                                                                  x.Size,
+                                                                                                  x.Proportion))
+                                                 .Select(x =>
+                                                 {
+                                                     var memoryStream = new MemoryStream();
+                                                     var processed = ImageFormatterService.ProcessImage(image, x.Size, x.Proportion);
+                                                     processed.Save(memoryStream, image.RawFormat);
+                                                     return new FileStreamSM
+                                                     {
+                                                         Stream = memoryStream,
+                                                         FileName = ImageFormatterService.SpecifyImagePath(model.FileName,
+                                                                                                           x.Size,
+                                                                                                           x.Proportion)
+                                                     };
+                                                 })
+                                                 .ToList();
 
+                tasks.Add(base.UploadFilesAsync(fileStreams));
+                disposings.Add(Task.Run(() => image.Dispose()));
+            });
+
+            await Task.WhenAll(tasks.ToArray());
+            await Task.WhenAll(disposings.ToArray());
 
 #if DEBUG
+
             Stopwatch.Stop();
             Console.WriteLine("{0} - Processing images took:", GetFullMemberName());
             Console.WriteLine(Stopwatch.Elapsed);
 #endif
-
-            return base.UploadFilesAsync(list);
         }
-        public static bool IsCorrectImageFormat(Stream stream, IEnumerable<ImageFormat> imageFormats)
+        public static bool IsCorrectImageFormat(Image image, IEnumerable<ImageFormat> imageFormats)
         {
-            using (var image = Image.FromStream(stream))
+            foreach (var format in imageFormats)
             {
-                foreach (var format in imageFormats)
+                if (image.RawFormat.Equals(format))
                 {
-                    if (image.RawFormat.Equals(format))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             return false;

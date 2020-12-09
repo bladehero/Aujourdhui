@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Aujourdhui.Infrastructure.Services.ImageFormatters;
-using System.Drawing.Imaging;
 using System.Drawing;
 
 namespace Aujourdhui.Infrastructure.Services
@@ -13,8 +12,8 @@ namespace Aujourdhui.Infrastructure.Services
         ProportionServiceResolver ProportionServiceResolver { get; }
         LinkedList<ImageSize> Sizes { get; }
 
-        bool CanBeProcessed(Stream source, ImageSize size, ImageProportion proportion);
-        Stream ProcessImage(Stream source, ImageSize size, ImageProportion proportion);
+        bool CanBeProcessed(Image image, ImageSize size, ImageProportion proportion);
+        Image ProcessImage(Image image, ImageSize size, ImageProportion proportion);
         string SpecifyImagePath(string path, ImageSize size, ImageProportion proportion);
     }
 }
