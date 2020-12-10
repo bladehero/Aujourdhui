@@ -5,6 +5,7 @@ using Aujourdhui.Services.Exceptions;
 using Aujourdhui.Services.Models.FileServiceModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
@@ -60,7 +61,7 @@ namespace Aujourdhui.Services.ContentServices
 
                 success = true;
             }
-            catch (Exception ex)
+            catch (NotSupportedImageFormatException ex)
             {
                 success = false;
                 Logger.LogError(ex,
@@ -68,6 +69,7 @@ namespace Aujourdhui.Services.ContentServices
                                 GetFullMemberName(),
                                 nameof(uploadTask),
                                 nameof(saveTask));
+                throw;
             }
 
             return success;
@@ -108,7 +110,7 @@ namespace Aujourdhui.Services.ContentServices
 
                 success = true;
             }
-            catch (Exception ex)
+            catch (NotSupportedImageFormatException ex)
             {
                 success = false;
                 Logger.LogError(ex,
@@ -117,6 +119,7 @@ namespace Aujourdhui.Services.ContentServices
                                 nameof(uploadTask),
                                 nameof(addTask),
                                 nameof(saveTask));
+                throw;
             }
 
             return success;
@@ -173,7 +176,7 @@ namespace Aujourdhui.Services.ContentServices
 
             return success;
         }
-        public virtual async Task<Stream> DownloadAsync(Guid guid)
+        public virtual async Task<Download> DownloadAsync(Guid guid)
         {
             var fileReference = await ApplicationDbContext.FileReferences
                                                           .AsNoTracking()
@@ -191,7 +194,8 @@ namespace Aujourdhui.Services.ContentServices
                 if (File.Exists(path))
                 {
                     var stream = new FileStream(path, FileMode.Open);
-                    return stream;
+                    new FileExtensionContentTypeProvider().TryGetContentType(path, out string contentType);
+                    return new Download(stream, contentType);
                 }
                 throw new FileNotFoundException("The specified file is not found!");
             }
@@ -201,7 +205,7 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public virtual async Task<Stream> DownloadAsync(string entity, int objectId, DateTime? date = null)
+        public virtual async Task<Download> DownloadAsync(string entity, int objectId, DateTime? date = null)
         {
             var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
 
@@ -231,7 +235,8 @@ namespace Aujourdhui.Services.ContentServices
                     if (File.Exists(path))
                     {
                         var stream = new FileStream(path, FileMode.Open);
-                        return stream;
+                        new FileExtensionContentTypeProvider().TryGetContentType(path, out string contentType);
+                        return new Download(stream, contentType);
                     }
                 }
                 throw new FileNotFoundException("The specified file is not found!");

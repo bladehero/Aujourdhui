@@ -1,5 +1,4 @@
-﻿using Aujourdhui.Infrastructure.Services.ImageFormatters;
-using Aujourdhui.Services.Models.ImageServiceModels;
+﻿using Aujourdhui.Services.Models.ImageServiceModels;
 
 namespace Aujourdhui.Infrastructure.Services.ImageFormatters
 {

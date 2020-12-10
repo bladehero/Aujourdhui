@@ -14,6 +14,7 @@ using Aujourdhui.Services.Models.FileServiceModels;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Imaging;
 using System.Drawing;
+using Microsoft.AspNetCore.StaticFiles;
 
 #nullable enable
 
@@ -43,7 +44,7 @@ namespace Aujourdhui.Services.ContentServices
 
         protected override string Root => Path.Combine(base.Root, ImagesFolder);
 
-        public async Task<Stream> DownloadAsync(Guid guid,
+        public async Task<Download> DownloadAsync(Guid guid,
                                                 ImageSize size = ImageSize.Origin,
                                                 ImageProportion proportion = ImageProportion.Origin)
         {
@@ -64,7 +65,8 @@ namespace Aujourdhui.Services.ContentServices
                 if (File.Exists(path))
                 {
                     var stream = new FileStream(path, FileMode.Open);
-                    return stream;
+                    new FileExtensionContentTypeProvider().TryGetContentType(fileName, out string contentType);
+                    return new Download(stream, contentType);
                 }
                 throw new FileNotFoundException("The specified file is not found!");
             }
@@ -74,7 +76,7 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public async Task<Stream> DownloadAsync(string entity,
+        public async Task<Download> DownloadAsync(string entity,
                                                 int objectId,
                                                 DateTime? date = null,
                                                 ImageSize size = ImageSize.Origin,
@@ -109,7 +111,8 @@ namespace Aujourdhui.Services.ContentServices
                     if (File.Exists(path))
                     {
                         var stream = new FileStream(path, FileMode.Open);
-                        return stream;
+                        new FileExtensionContentTypeProvider().TryGetContentType(fileName, out string contentType);
+                        return new Download(stream, contentType);
                     }
                 }
                 throw new FileNotFoundException("The specified file is not found!");

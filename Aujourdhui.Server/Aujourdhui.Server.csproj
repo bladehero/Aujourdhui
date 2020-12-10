@@ -30,6 +30,7 @@
     <ProjectReference Include="..\Aujourdhui.Client\Aujourdhui.Client.csproj" />
     <ProjectReference Include="..\Aujourdhui.Data\Aujourdhui.Data.csproj" />
     <ProjectReference Include="..\Aujourdhui.Models\Aujourdhui.Services.Models\Aujourdhui.Services.Models.csproj" />
+    <ProjectReference Include="..\Aujourdhui.Models\Aujourdhui.ViewModels\Aujourdhui.ViewModels.csproj" />
     <ProjectReference Include="..\Aujourdhui.Services\Aujourdhui.Services.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,6 @@
 ﻿using Aujourdhui.Services.Models.FileServiceModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Aujourdhui.Infrastructure.Services
@@ -11,8 +10,8 @@ namespace Aujourdhui.Infrastructure.Services
         Task<int> CountAsync(string entity, int objectId, DateTime? date = null);
         Task DeleteAllAsync(string entity, int objectId);
         Task DeleteAsync(Guid guid);
-        Task<Stream> DownloadAsync(Guid guid);
-        Task<Stream> DownloadAsync(string entity, int objectId, DateTime? date = null);
+        Task<Download> DownloadAsync(Guid guid);
+        Task<Download> DownloadAsync(string entity, int objectId, DateTime? date = null);
         Task<IEnumerable<Guid>> GetAsync(string entity, int objectId, DateTime? date = null, int? size = null, int page = 0);
         Task<Guid?> GetFirstAsync(string entity, int objectId, DateTime? date = null);
         Task<bool> HasMultipleAsync(string entity, int objectId, DateTime? date = null);

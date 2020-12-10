@@ -1,6 +1,5 @@
 ﻿using Aujourdhui.Services.Models.ImageServiceModels;
 using System.Collections.Generic;
-using System.IO;
 using Aujourdhui.Infrastructure.Services.ImageFormatters;
 using System.Drawing;
 
