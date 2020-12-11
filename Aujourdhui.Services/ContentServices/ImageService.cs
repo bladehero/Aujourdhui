@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Drawing.Imaging;
 using System.Drawing;
 using Microsoft.AspNetCore.StaticFiles;
+using Aujourdhui.Extensions.ImageExtensions;
 
 #nullable enable
 
@@ -77,20 +78,12 @@ namespace Aujourdhui.Services.ContentServices
             }
         }
         public async Task<Download> DownloadAsync(string entity,
-                                                int objectId,
-                                                DateTime? date = null,
-                                                ImageSize size = ImageSize.Origin,
-                                                ImageProportion proportion = ImageProportion.Origin)
+                                                  Guid guid,
+                                                  DateTime? date = null,
+                                                  ImageSize size = ImageSize.Origin,
+                                                  ImageProportion proportion = ImageProportion.Origin)
         {
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var fileReferences = ApplicationDbContext.FileReferences
                                                      .AsNoTracking()
@@ -153,9 +146,14 @@ namespace Aujourdhui.Services.ContentServices
             var disposings = new List<Task>(capacity);
             Parallel.ForEach(models, model =>
             {
+                if (model.Stream is null)
+                {
+                    throw new NullReferenceException($"Parameter `{nameof(model.Stream)}` cannot be null!");
+                }
+
                 var image = Image.FromStream(model.Stream);
 
-                if (!IsCorrectImageFormat(image, RequiredFormats.Select(x => x.Key)))
+                if (!image.IsCorrectImageFormat(RequiredFormats.Select(x => x.Key)))
                 {
                     throw new NotSupportedImageFormatException(image.RawFormat.ToString());
                 }
@@ -191,17 +189,6 @@ namespace Aujourdhui.Services.ContentServices
             Console.WriteLine("{0} - Processing images took:", GetFullMemberName());
             Console.WriteLine(Stopwatch.Elapsed);
 #endif
-        }
-        public static bool IsCorrectImageFormat(Image image, IEnumerable<ImageFormat> imageFormats)
-        {
-            foreach (var format in imageFormats)
-            {
-                if (image.RawFormat.Equals(format))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
         #endregion
     }

@@ -194,6 +194,7 @@ namespace Aujourdhui.Data
             #endregion
 
             #region Unique Guids
+            #region KeyModels
             builder.Entity<Country>().HasAlternateKey(x => x.Guid);
             builder.Entity<FileReference>().HasAlternateKey(x => x.Guid);
             builder.Entity<Firm>().HasAlternateKey(x => x.Guid);
@@ -218,6 +219,15 @@ namespace Aujourdhui.Data
             builder.Entity<CommodityLink>().HasAlternateKey(x => x.Guid);
             builder.Entity<Purchase>().HasAlternateKey(x => x.Guid);
             builder.Entity<PurchaseConsumption>().HasAlternateKey(x => x.Guid);
+            #endregion
+
+            #region ISecurable only
+            builder.Entity<ApplicationUser>().HasAlternateKey(x => x.Guid);
+            builder.Entity<LanguageValue>().HasAlternateKey(x => x.Guid);
+            builder.Entity<RecipeDifficultyLevelValue>().HasAlternateKey(x => x.Guid);
+            builder.Entity<RecipeItemTypeValue>().HasAlternateKey(x => x.Guid);
+            builder.Entity<PortionTypeValue>().HasAlternateKey(x => x.Guid);
+            #endregion
             #endregion
 
             base.OnModelCreating(builder);

@@ -1,5 +1,8 @@
 ﻿using Aujourdhui.Data;
 using Aujourdhui.Data.Models;
+using Aujourdhui.Data.Models.Essentials;
+using Aujourdhui.Data.Models.Interfaces;
+using Aujourdhui.Extensions.EntityFrameworkExtensions;
 using Aujourdhui.Infrastructure.Services;
 using Aujourdhui.Services.Exceptions;
 using Aujourdhui.Services.Models.FileServiceModels;
@@ -7,7 +10,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -34,14 +36,27 @@ namespace Aujourdhui.Services.ContentServices
             WebHostEnvironment = webHostEnvironment;
         }
 
-        public virtual async Task<bool> OverwriteAsync(FileStreamSM model, Guid guid)
+        public virtual async Task OverwriteAsync(FileStreamSM model, Guid guid)
         {
-            bool success;
-
             var fileReference = await ApplicationDbContext.FileReferences.FirstOrDefaultAsync(x => x.Guid == guid);
             if (fileReference is null)
             {
                 throw new FileReferenceNotFound(guid);
+            }
+
+            if (model is null)
+            {
+                throw new NullReferenceException($"`Parameter {nameof(model)}` cannot be null!");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.FileName))
+            {
+                throw new ArgumentException(nameof(model.FileName));
+            }
+
+            if (model.Stream is null)
+            {
+                throw new NullReferenceException($"`Parameter {nameof(model.Stream)}` cannot be null!");
             }
 
             var folder = PathToFolderWithFile(fileReference.Entity, fileReference.Date, fileReference.Guid);
@@ -58,12 +73,9 @@ namespace Aujourdhui.Services.ContentServices
             try
             {
                 await Task.WhenAll(uploadTask, saveTask);
-
-                success = true;
             }
             catch (NotSupportedImageFormatException ex)
             {
-                success = false;
                 Logger.LogError(ex,
                                 "An error occured in {0} while executing tasks: {1}, {2}",
                                 GetFullMemberName(),
@@ -71,17 +83,25 @@ namespace Aujourdhui.Services.ContentServices
                                 nameof(saveTask));
                 throw;
             }
-
-            return success;
         }
-        public virtual async Task<bool> UploadAsync(FileStreamSM model, string entity, int objectId, DateTime? date = null)
+        public virtual async Task UploadAsync(FileStreamSM model, string entity, Guid guid, DateTime? date = null)
         {
-            bool success;
-
-            if (ApplicationDbContext.Model.FindEntityType(entity) is null)
+            if (model is null)
             {
-                throw new EntityTypeNotFoundException(entity);
+                throw new NullReferenceException($"`Parameter {nameof(model)}` cannot be null!");
             }
+
+            if (string.IsNullOrWhiteSpace(model.FileName))
+            {
+                throw new ArgumentException(nameof(model.FileName));
+            }
+
+            if (model.Stream is null)
+            {
+                throw new NullReferenceException($"`Parameter {nameof(model.Stream)}` cannot be null!");
+            }
+
+            var objectId = await Validate(entity, guid);
 
             if (date is null)
             {
@@ -107,12 +127,9 @@ namespace Aujourdhui.Services.ContentServices
             try
             {
                 await Task.WhenAll(uploadTask, addTask, saveTask);
-
-                success = true;
             }
             catch (NotSupportedImageFormatException ex)
             {
-                success = false;
                 Logger.LogError(ex,
                                 "An error occured in {0} while executing tasks: {1}, {2}",
                                 GetFullMemberName(),
@@ -121,17 +138,15 @@ namespace Aujourdhui.Services.ContentServices
                                 nameof(saveTask));
                 throw;
             }
-
-            return success;
         }
-        public virtual async Task<bool> UploadAsync(IEnumerable<FileStreamSM> models, string entity, int objectId, DateTime? date = null)
+        public virtual async Task UploadAsync(IEnumerable<FileStreamSM> models, string entity, Guid guid, DateTime? date = null)
         {
-            bool success;
-
-            if (ApplicationDbContext.Model.FindEntityType(entity) is null)
+            if (models is null)
             {
-                throw new EntityTypeNotFoundException(entity);
+                throw new NullReferenceException($"`Parameter {nameof(models)}` cannot be null!");
             }
+
+            var objectId = await Validate(entity, guid);
 
             if (date is null)
             {
@@ -140,6 +155,16 @@ namespace Aujourdhui.Services.ContentServices
 
             var referencePaths = models.Select(x =>
             {
+                if (string.IsNullOrWhiteSpace(x.FileName))
+                {
+                    throw new ArgumentException(nameof(x.FileName));
+                }
+
+                if (x.Stream is null)
+                {
+                    throw new NullReferenceException($"`Parameter {nameof(x.Stream)}` cannot be null!");
+                }
+
                 var fileReference = new FileReference
                 {
                     Date = date.Value,
@@ -163,18 +188,13 @@ namespace Aujourdhui.Services.ContentServices
                 await UploadFilesAsync(referencePaths.Select(x => new FileStreamSM(x.Stream, x.Path)));
                 await ApplicationDbContext.FileReferences.AddRangeAsync(referencePaths.Select(x => x.FileReference));
                 await ApplicationDbContext.SaveChangesAsync();
-
-                success = true;
             }
             catch (Exception ex)
             {
-                success = false;
                 Logger.LogError(ex,
                                 "An error occured in {0} while uploading files",
                                 GetFullMemberName());
             }
-
-            return success;
         }
         public virtual async Task<Download> DownloadAsync(Guid guid)
         {
@@ -205,17 +225,9 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public virtual async Task<Download> DownloadAsync(string entity, int objectId, DateTime? date = null)
+        public virtual async Task<Download> DownloadAsync(string entity, Guid guid, DateTime? date = null)
         {
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var fileReferences = ApplicationDbContext.FileReferences
                                                      .AsNoTracking()
@@ -247,7 +259,7 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public virtual async Task<IEnumerable<Guid>> GetAsync(string entity, int objectId, DateTime? date = null, int? size = null, int page = 0)
+        public virtual async Task<IEnumerable<Guid>> GetAsync(string entity, Guid guid, DateTime? date = null, int? size = null, int page = 0)
         {
             if (size < decimal.One)
             {
@@ -259,15 +271,7 @@ namespace Aujourdhui.Services.ContentServices
                 throw new ArgumentException("Page cannot be a negative number!");
             }
 
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var fileReferences = ApplicationDbContext.FileReferences
                                                      .AsNoTracking()
@@ -281,17 +285,9 @@ namespace Aujourdhui.Services.ContentServices
 
             return fileReferences.Select(x => x.Guid);
         }
-        public virtual async Task<Guid?> GetFirstAsync(string entity, int objectId, DateTime? date = null)
+        public virtual async Task<Guid?> GetFirstAsync(string entity, Guid guid, DateTime? date = null)
         {
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var fileReferences = ApplicationDbContext.FileReferences
                                                      .AsNoTracking()
@@ -300,25 +296,17 @@ namespace Aujourdhui.Services.ContentServices
 
             return fileReferences.FirstOrDefault()?.Guid;
         }
-        public virtual async Task<int> CountAsync(string entity, int objectId, DateTime? date = null)
+        public virtual async Task<int> CountAsync(string entity, Guid guid, DateTime? date = null)
         {
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var count = await ApplicationDbContext.FileReferences.CountAsync(x => x.ObjectId == objectId && x.Entity == entity && (!date.HasValue || date.Value.Date == x.Date.Date));
 
             return count;
         }
-        public virtual async Task<bool> HasMultipleAsync(string entity, int objectId, DateTime? date = null)
+        public virtual async Task<bool> HasMultipleAsync(string entity, Guid guid, DateTime? date = null)
         {
-            return await CountAsync(entity, objectId, date) > 1;
+            return await CountAsync(entity, guid, date) > 1;
         }
         public virtual async Task DeleteAsync(Guid guid)
         {
@@ -347,17 +335,9 @@ namespace Aujourdhui.Services.ContentServices
                 throw;
             }
         }
-        public virtual async Task DeleteAllAsync(string entity, int objectId)
+        public virtual async Task DeleteAllAsync(string entity, Guid guid)
         {
-            var entityType = ApplicationDbContext.Model.FindEntityType(entity) ?? throw new EntityTypeNotFoundException(entity);
-
-            var primaryKeyValue = PrepareIdToObject(entityType, objectId);
-            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
-
-            if (obj is null)
-            {
-                throw new EntityNotFoundException(objectId, entityType);
-            }
+            var objectId = await Validate(entity, guid);
 
             var fileReferences = ApplicationDbContext.FileReferences.Where(x => x.ObjectId == objectId && x.Entity == entity);
 
@@ -397,8 +377,6 @@ namespace Aujourdhui.Services.ContentServices
             }
         }
 
-
-
         #region Helpers
         protected async Task UploadFileAsync(Stream stream, string path)
         {
@@ -408,25 +386,14 @@ namespace Aujourdhui.Services.ContentServices
         {
             foreach (var model in models)
             {
-                model.Stream.Seek(0, SeekOrigin.Begin);
-                using var fs = new FileStream(model.FileName, FileMode.OpenOrCreate);
-                await model.Stream.CopyToAsync(fs);
-                await model.Stream.DisposeAsync();
+                if (model.Stream != null && model.FileName != null)
+                {
+                    model.Stream.Seek(0, SeekOrigin.Begin);
+                    using var fs = new FileStream(model.FileName, FileMode.OpenOrCreate);
+                    await model.Stream.CopyToAsync(fs);
+                    await model.Stream.DisposeAsync();
+                }
             }
-        }
-        protected static object PrepareIdToObject(IEntityType entityType, int objectId)
-        {
-            var primaryKey = entityType.FindPrimaryKey().Properties.FirstOrDefault();
-            object primaryKeyValue;
-            if (primaryKey?.ClrType.IsEnum == true)
-            {
-                primaryKeyValue = Enum.ToObject(primaryKey.ClrType, objectId);
-            }
-            else
-            {
-                primaryKeyValue = objectId;
-            }
-            return primaryKeyValue;
         }
         protected string PathToFolderWithFile(string entity, DateTime date, Guid guid)
         {
@@ -444,6 +411,38 @@ namespace Aujourdhui.Services.ContentServices
         protected static string PathToFile(string folder, string fileName)
         {
             return Path.Combine(folder, fileName);
+        }
+        protected virtual async Task<int> Validate(string entity, Guid guid)
+        {
+            var entityType = ApplicationDbContext.Model.FindEntityType(entity);
+            if (entityType is null)
+            {
+                throw new EntityTypeNotFoundException(entity);
+            }
+
+            var dbSet = ApplicationDbContext.GetDbSet<ISecurable>(entityType.ClrType);
+            var record = dbSet.FirstOrDefault(x=>x.Guid == guid);
+
+            var data = await ApplicationDbContext.FindAsync(entityType.ClrType, record);
+            if (data is null)
+            {
+                throw new EntityNotFoundException(guid, entityType);
+            }
+
+            var objectId = entityType.GetIntegerPrimaryKey(data);
+            if (objectId is null)
+            {
+                throw new PrimaryKeyNotFoundException();
+            }
+
+            var primaryKeyValue = entityType.ToObject(objectId.Value);
+            var obj = await ApplicationDbContext.FindAsync(entityType.ClrType, primaryKeyValue);
+            if (obj is null)
+            {
+                throw new EntityNotFoundException(guid, entityType);
+            }
+
+            return objectId.Value;
         }
         #endregion
     }

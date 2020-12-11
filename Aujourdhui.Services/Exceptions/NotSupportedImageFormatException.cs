@@ -6,11 +6,11 @@ namespace Aujourdhui.Services.Exceptions
 {
     public class NotSupportedImageFormatException : Exception
     {
-        public string Extension { get; set; }
+        public string? Extension { get; set; }
 
-        public NotSupportedImageFormatException(string extension)
+        public NotSupportedImageFormatException(string? extension)
             : this(extension, null) { }
-        public NotSupportedImageFormatException(string extension, Exception? innerException)
+        public NotSupportedImageFormatException(string? extension, Exception? innerException)
             : base($"Not supported image format `{extension}`!", innerException)
         {
             Extension = extension;
